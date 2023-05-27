@@ -1,6 +1,5 @@
 package org.GameStation;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -10,7 +9,14 @@ public class Main {
         config.title = "GameStation";
         config.width = 640;
         config.height = 480;
-        MenuScreen menu = new MenuScreen();
-        new LwjglApplication(menu, config);
+
+        Juego juego = new Juego() {
+            @Override
+            public void create() {
+                setScreen(new MenuScreen(this));
+            }
+        };
+
+        new LwjglApplication(juego, config);
     }
 }
