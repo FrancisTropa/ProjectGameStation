@@ -1,35 +1,25 @@
 package org.GameStation;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public abstract class Juego extends ApplicationAdapter {
+public abstract class Juego extends Game {
     private Stage stage;
-    private OrthographicCamera camera;
+    private OrthographicCamera camara;
     private SpriteBatch batch;
     private FitViewport viewport;
 
-    public Juego() {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "Juego";
-        config.width = 640;
-        config.height = 480;
-        new LwjglApplication(this, config);
-    }
-
     @Override
     public void create() {
-        camera = new OrthographicCamera();
+        camara = new OrthographicCamera();
         batch = new SpriteBatch();
         stage = new Stage();
-        viewport = new FitViewport(640, 480, camera);
+        viewport = new FitViewport(640, 480, camara);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
     }
@@ -37,9 +27,13 @@ public abstract class Juego extends ApplicationAdapter {
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(camera.combined);
+
+        batch.setProjectionMatrix(camara.combined);
         batch.begin();
+        // Renderiza el contenido del juego
+        renderGame();
         batch.end();
+
         stage.act();
         stage.draw();
     }
@@ -47,8 +41,8 @@ public abstract class Juego extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.update();
+        camara.position.set(camara.viewportWidth / 2f, camara.viewportHeight / 2f, 0);
+        camara.update();
     }
 
     @Override
@@ -56,4 +50,18 @@ public abstract class Juego extends ApplicationAdapter {
         stage.dispose();
         batch.dispose();
     }
+
+    public FitViewport getViewport(){
+        return this.viewport;
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public OrthographicCamera getCamara() {
+        return camara;
+    }
+
+    public abstract void renderGame();
 }
