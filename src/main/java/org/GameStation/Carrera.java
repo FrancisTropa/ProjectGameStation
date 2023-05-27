@@ -20,7 +20,7 @@ public class Carrera extends Juego.PantallaJuego {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        textura = new Texture("C:/Users/acer/Documents/ProjectGameStation/GameStation/src/main/java/org/GameStation/imagenes/carro.png");
+        textura = new Texture("C:/Users/acer/Documents/ProjectGameStation/ParaProbar/src/main/java/org/imagen/carro.png");
         carro = new Carro(textura);
     }
 
