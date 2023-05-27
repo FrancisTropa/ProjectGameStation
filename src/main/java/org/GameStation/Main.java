@@ -10,5 +10,7 @@ public class Main {
         config.title = "GameStation";
         config.width = 640;
         config.height = 480;
-        new LwjglApplication(new MenuScreen(), config);
-}}
+        MenuScreen menu = new MenuScreen();
+        new LwjglApplication(menu, config);
+    }
+}

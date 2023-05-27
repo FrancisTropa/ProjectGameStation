@@ -1,7 +1,6 @@
 package org.GameStation;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -13,17 +12,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuScreen extends ApplicationAdapter {
     private Stage stage;
-    private Table table;
-    private Label titleLabel;
-    private TextButton tetrisButton, carrerasButton;
+    private Table tabla;
+    private Label titulo;
+    private TextButton botonTetris, botonCarrera;
+    private Juego juego;
 
     @Override
-    public void create () {
+    public void create() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
+        tabla = new Table();
+        tabla.setFillParent(true);
+        stage.addActor(tabla);
 
         // Configurar fuente y estilo de los botones
         BitmapFont font = new BitmapFont();
@@ -32,35 +32,37 @@ public class MenuScreen extends ApplicationAdapter {
         buttonStyle.fontColor = Color.CYAN;
 
         // Crear elementos de la interfaz gráfica
-        titleLabel = new Label("GameStation", new Label.LabelStyle(font, Color.WHITE));
-        tetrisButton = new TextButton("Tetris", buttonStyle);
-        carrerasButton = new TextButton("Carreras", buttonStyle);
+        titulo = new Label("GameStation", new Label.LabelStyle(font, Color.WHITE));
+        botonTetris = new TextButton("Tetris", buttonStyle);
+        botonCarrera = new TextButton("Carreras", buttonStyle);
 
         // Agregar listeners a los botones
-        tetrisButton.addListener(new ClickListener() {
+        botonTetris.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Botón Tetris presionado.");
             }
         });
 
-        carrerasButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Botón Carrera presionado.");
-            }
-        });
+        botonCarrera.addListener(
+                new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        juego = new Carrera();
+                        juego.create();
+                    }
+                });
 
         // Agregar elementos a la tabla
-        table.add(titleLabel).colspan(2).padTop(50).expandY().center();
-        table.row();
-        table.add(tetrisButton).width(200).height(80).padBottom(20).center();
-        table.row();
-        table.add(carrerasButton).width(200).height(80).center();
+        tabla.add(titulo).colspan(2).padTop(50).expandY().center();
+        tabla.row();
+        tabla.add(botonTetris).width(200).height(80).padBottom(20).center();
+        tabla.row();
+        tabla.add(botonCarrera).width(200).height(80).center();
     }
 
     @Override
-    public void render () {
+    public void render() {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
@@ -68,7 +70,10 @@ public class MenuScreen extends ApplicationAdapter {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         stage.dispose();
+        if (juego != null) {
+            juego.dispose();
+        }
     }
 }
