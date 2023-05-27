@@ -1,61 +1,58 @@
 package org.GameStation.CarreraPackage;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Carro {
-    private Texture textura;
+    private Texture texturaCarro;
+    private Sprite spriteCarro;
+    private FitViewport viewport;
     private Vector2 posicion;
-    private Vector2 velocidad;
-    private boolean moverIzquierda;
-    private boolean moverDerecha;
-    private int ancho;
-    private int alto;
+    private float velocidad = 200f;
 
-    public Carro(Texture textura) {
-        this.textura = textura;
-        posicion = new Vector2(100, 100);
-        velocidad = new Vector2(100, 0);
-        calcularProporciones();
+    public Carro(FitViewport viewport) {
+        this.viewport = viewport;
+        texturaCarro = new Texture("C:/Users/acer/Documents/ProjectGameStation/GameStation/src/main/java/org/GameStation/imagenes/carro.png");
+        spriteCarro = new Sprite(texturaCarro);
+        spriteCarro.setSize(viewport.getWorldWidth() / 4f, viewport.getWorldHeight() / 4f);
+        spriteCarro.setPosition(viewport.getWorldWidth() / 2f - spriteCarro.getWidth() / 2f, 0);
+        spriteCarro.flip(false, true); // Voltea el sprite verticalmente
+        posicion = new Vector2(spriteCarro.getX(), spriteCarro.getY());
     }
 
-    public void update(float delta) {
-        if (moverIzquierda) {
-            velocidad.x = -100;
-        } else if (moverDerecha) {
-            velocidad.x = 100;
-        } else {
-            velocidad.x = 0;
+    public void actualizaPosicion(float delta) {
+        float movementAmount = velocidad * delta;
+        // Mueve el carro a la izquierda o a la derecha
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            posicion.x -= movementAmount;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            posicion.x += movementAmount;
         }
-
-        float nuevaPosX = posicion.x + velocidad.x * delta;
-        if (nuevaPosX >= 0 && nuevaPosX + ancho <= Gdx.graphics.getWidth()) {
-            posicion.x = nuevaPosX;
+        // Limita la posición del carro para que se mantenga dentro de la ventana
+        if (posicion.x < 0) {
+            posicion.x = 0;
+        } else if (posicion.x > viewport.getWorldWidth() - spriteCarro.getWidth()) {
+            posicion.x = viewport.getWorldWidth() - spriteCarro.getWidth();
         }
-
-        posicion.x += velocidad.x * delta;
-        posicion.y += velocidad.y * delta;
-    }
-
-    public void setMoverIzquierda(boolean moverIzquierda) {
-        this.moverIzquierda = moverIzquierda;
-    }
-
-    public void setMoverDerecha(boolean moverDerecha) {
-        this.moverDerecha = moverDerecha;
-    }
-
-    private void calcularProporciones() {
-        int ventanaAncho = Gdx.graphics.getWidth();
-        int ventanaAlto = Gdx.graphics.getHeight();
-
-        ancho = ventanaAncho / 8;
-        alto = ventanaAlto / 3;
+        // Actualiza la posición
+        spriteCarro.setPosition(posicion.x, posicion.y);
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(textura, posicion.x, posicion.y, ancho, alto, 0, 0, textura.getWidth(), textura.getHeight(), false, true);
+        // Renderizar el carro en su posición actual
+        spriteCarro.draw(batch);
+    }
+
+    public FitViewport getViewport() {
+        return viewport;
+    }
+
+    public void dispose() {
+        texturaCarro.dispose();
     }
 }
