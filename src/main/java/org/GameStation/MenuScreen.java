@@ -11,10 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuScreen extends Juego.PantallaJuego {
 
-    private Stage stage;
-    private Table tabla;
-    private Label titulo;
-    private TextButton BotonTetris, BotonCarrera;
+    Stage stage;
+    Table tabla;
+    Label titulo;
+    TextButton BotonTetris;
+    TextButton BotonCarrera;
 
     public MenuScreen(Juego juego) {
         super(juego);
@@ -31,15 +32,20 @@ public class MenuScreen extends Juego.PantallaJuego {
         // Configurar fuente y estilo de los botones
         BitmapFont font = new BitmapFont();
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.font = font;
-        buttonStyle.fontColor = Color.CYAN;
+        confBoton(buttonStyle, font);
 
         // Crear elementos de la interfaz gráfica
-        titulo = new Label("GameStation", new Label.LabelStyle(font, Color.WHITE));
-        BotonTetris = new TextButton("Tetris", buttonStyle);
-        BotonCarrera = new TextButton("Carreras", buttonStyle);
+        crearElementos(tabla, buttonStyle, font);
 
         // Agregar listeners a los botones
+        agregarListerner();
+
+        // Agregar elementos a la tabla
+        agregarATabla();
+
+    }
+
+    private void agregarListerner() {
         BotonTetris.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -50,17 +56,29 @@ public class MenuScreen extends Juego.PantallaJuego {
         BotonCarrera.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Carrera carrera = new Carrera(juego);
+                Juego.PantallaJuego carrera = new Carrera(juego);
                 juego.setScreen(carrera);
             }
         });
+    }
 
-        // Agregar elementos a la tabla
+    private void agregarATabla() {
         tabla.add(titulo).colspan(2).padTop(50).expandY().center();
         tabla.row();
         tabla.add(BotonTetris).width(200).height(80).padBottom(20).center();
         tabla.row();
         tabla.add(BotonCarrera).width(200).height(80).center();
+    }
+
+    private void crearElementos(Table tabla, TextButton.TextButtonStyle buttonStyle, BitmapFont font) {
+        titulo = new Label("GameStation", new Label.LabelStyle(font, Color.WHITE));
+        BotonTetris = new TextButton("Tetris", buttonStyle);
+        BotonCarrera = new TextButton("Carreras", buttonStyle);
+    }
+
+    public void confBoton(TextButton.TextButtonStyle buttonStyle, BitmapFont font){
+        buttonStyle.font = font;
+        buttonStyle.fontColor = Color.CYAN;
     }
 
     @Override
@@ -74,6 +92,7 @@ public class MenuScreen extends Juego.PantallaJuego {
 
     @Override
     public void dispose() {
+
         stage.dispose();
     }
 }
