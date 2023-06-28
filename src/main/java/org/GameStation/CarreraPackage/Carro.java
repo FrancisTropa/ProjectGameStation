@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Carro {
     private Texture textura;
@@ -13,19 +14,20 @@ public class Carro {
     private boolean moverDerecha;
     private int ancho;
     private int alto;
+    private int velocidadMovimiento = 300;
 
     public Carro(Texture textura) {
         this.textura = textura;
-        posicion = new Vector2(100, 100);
-        velocidad = new Vector2(100, 0);
+        definirPosicion();
+        velocidad = new Vector2(0, 0);
         calcularProporciones();
     }
 
     public void update(float delta) {
         if (moverIzquierda) {
-            velocidad.x = -100; // Velocidad negativa para mover hacia la izquierda
+            velocidad.x = (-1 * velocidadMovimiento); // Velocidad negativa para mover hacia la izquierda
         } else if (moverDerecha) {
-            velocidad.x = 100; // Velocidad positiva para mover hacia la derecha
+            velocidad.x = (velocidadMovimiento); // Velocidad positiva para mover hacia la derecha
         } else {
             velocidad.x = 0; // No hay movimiento horizontal si ninguna tecla está presionada
         }
@@ -34,9 +36,18 @@ public class Carro {
         if (nuevaPosX >= 0 && nuevaPosX + ancho <= Gdx.graphics.getWidth()) {
             posicion.x = nuevaPosX;
         }
+    }
 
-        posicion.x += velocidad.x * delta;
-        posicion.y += velocidad.y * delta;
+    private void definirPosicion() {
+        posicion = new Vector2(Gdx.graphics.getWidth()/2.4f, Gdx.graphics.getHeight()/3);
+    }
+
+    private void calcularProporciones() {
+        int ventanaAncho = Gdx.graphics.getWidth();
+        int ventanaAlto = Gdx.graphics.getHeight();
+
+        ancho = ventanaAncho / 8;
+        alto = ventanaAlto / 3;
     }
 
     public void setMoverIzquierda(boolean moverIzquierda) {
@@ -47,12 +58,8 @@ public class Carro {
         this.moverDerecha = moverDerecha;
     }
 
-    private void calcularProporciones() {
-        int ventanaAncho = Gdx.graphics.getWidth();
-        int ventanaAlto = Gdx.graphics.getHeight();
-
-        ancho = ventanaAncho / 8;
-        alto = ventanaAlto / 3;
+    public Rectangle getRectanguloColision() {
+        return new Rectangle(posicion.x, posicion.y, ancho, alto);
     }
 
     public void render(SpriteBatch batch) {

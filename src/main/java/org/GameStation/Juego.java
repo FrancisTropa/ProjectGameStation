@@ -5,7 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 
 public abstract class Juego extends Game {
 
-    protected abstract static class PantallaJuego extends ScreenAdapter {
+    public abstract static class PantallaJuego extends ScreenAdapter {
         protected Juego juego;
 
         public PantallaJuego(Juego juego) {

@@ -1,47 +1,54 @@
 package org.GameStation;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AlmacenamientoPuntajeTest {
 
-    private String ruta = "archivos/archivoTest.txt";
-    private AlmacenamientoPuntaje almacenamiento;
+    private String ruta;
 
     @BeforeEach
-    public void setup() {
-        almacenamiento = new AlmacenamientoPuntaje();
+    void setUp(){
+        ruta = "archivos/puntajes.json";
     }
 
     @Test
-    @Order(1)
-    void testCrearArchivo() {
-        almacenamiento.crearArchivo(ruta);
+    @DisplayName("comprueba la creacion del archivo")
+    void crearArchivo(){
+        AlmacenamientoPuntaje.crearArchivo(ruta, "Juego1", 20);
         File archivo = new File(ruta);
-        assertTrue(archivo.exists(), "El archivo no se creo correctamente");
+        assertTrue(archivo.exists());
     }
 
     @Test
-    @Order(2)
-    void testSobrescribirArchivo() {
-        almacenamiento.sobrescribirArchivo(ruta, 20);
-        assertEquals(20, Integer.parseInt(almacenamiento.leerArchivo(ruta)), "El archivo no sobreescribio correctamente");
+    @DisplayName("comprueba que puede recuperar el puntaje segun el nombre de la clase")
+    void recuperarPuntajeArchivo(){
+        AlmacenamientoPuntaje.crearArchivo(ruta, "juego1", 20);
+        float puntaje = AlmacenamientoPuntaje.ObtenerPuntaje(ruta, "juego1");
+        assertEquals(20, puntaje);
     }
 
     @Test
-    @Order(3)
-    void testLeerArchivo() {
-        almacenamiento.leerArchivo(ruta);
-        assertEquals(20, Integer.parseInt(almacenamiento.leerArchivo(ruta)), "El contenido no se leyo correctamente");
+    @DisplayName("comprueba que se sobreescriba un nuevo puntaje en el DatoJuego que coincida el nombre")
+    void sobreEscribirArchivo(){
+        AlmacenamientoPuntaje.crearArchivo(ruta, "juego1", 20);
+        AlmacenamientoPuntaje.sobreescribirArchivo(ruta, "juego1", 30);
+        float puntaje = AlmacenamientoPuntaje.ObtenerPuntaje(ruta, "juego1");
+        assertEquals(30, puntaje);
     }
 
     @Test
-    @Order(4)
-    void testEliminarArchivo() {
-        almacenamiento.eliminarArchivo(ruta);
-        File archivo = new File(ruta);
-        assertFalse(archivo.exists(), "El archivo no se elimino correctamente");
+    @DisplayName("Agrega un nuevo DatoJuego al archivo")
+    void agregarNuevoDatoAlArchivo(){
+        AlmacenamientoPuntaje.crearArchivo(ruta, "juego1", 20);
+        AlmacenamientoPuntaje.agregarDatoAlArchivo(ruta, "juego2", 40);
+        float puntaje = AlmacenamientoPuntaje.ObtenerPuntaje(ruta, "juego2");
+        assertEquals(40, puntaje);
     }
+
 }
