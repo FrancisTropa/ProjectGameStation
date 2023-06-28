@@ -20,10 +20,8 @@ public class AlmacenamientoPuntaje {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(datosJuego);
 
-        try{
-            FileWriter fileWriter = new FileWriter(ruta);
+        try (FileWriter fileWriter = new FileWriter(ruta)) {
             fileWriter.write(json);
-            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,11 +30,9 @@ public class AlmacenamientoPuntaje {
     public static float ObtenerPuntaje(String ruta, String nombreClase) {
         try {
             Gson gson = new Gson();
-            FileReader fileReader = new FileReader(ruta);
-            JsonReader jsonReader = new JsonReader(fileReader);
-            jsonReader.setLenient(true);
+            JsonReader jsonReader = obtenerJsonReader(ruta);
 
-            DatoJuego[] datosJuego = gson.fromJson(jsonReader, DatoJuego[].class);
+            DatoJuego[] datosJuego = deserializar(gson, jsonReader);
             for (DatoJuego datoJuego : datosJuego) {
                 if (datoJuego.getNombreClase().equals(nombreClase)) {
                     return datoJuego.getPuntaje();
@@ -53,11 +49,9 @@ public class AlmacenamientoPuntaje {
     public static void sobreescribirArchivo(String ruta, String nombreClase, float puntaje) {
         try {
             Gson gson = new Gson();
-            FileReader fileReader = new FileReader(ruta);
-            JsonReader jsonReader = new JsonReader(fileReader);
-            jsonReader.setLenient(true);
+            JsonReader jsonReader = obtenerJsonReader(ruta);
 
-            DatoJuego[] datosJuego = gson.fromJson(jsonReader, DatoJuego[].class);
+            DatoJuego[] datosJuego = deserializar(gson, jsonReader);
             for (DatoJuego datoJuego : datosJuego) {
                 if (datoJuego.getNombreClase().equals(nombreClase)) {
                     datoJuego.setPuntaje(puntaje);
@@ -66,9 +60,9 @@ public class AlmacenamientoPuntaje {
             }
 
             String json = gson.toJson(datosJuego);
-            FileWriter fileWriter = new FileWriter(ruta);
-            fileWriter.write(json);
-            fileWriter.close();
+            try (FileWriter fileWriter = new FileWriter(ruta)) {
+                fileWriter.write(json);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,11 +71,9 @@ public class AlmacenamientoPuntaje {
     public static void agregarDatoAlArchivo(String ruta, String nombreClase, float puntaje) {
         try {
             Gson gson = new Gson();
-            FileReader fileReader = new FileReader(ruta);
-            JsonReader jsonReader = new JsonReader(fileReader);
-            jsonReader.setLenient(true);
+            JsonReader jsonReader = obtenerJsonReader(ruta);
 
-            DatoJuego[] datosJuego = gson.fromJson(jsonReader, DatoJuego[].class);
+            DatoJuego[] datosJuego = deserializar(gson, jsonReader);
             List<DatoJuego> listaDatosJuego = new ArrayList<>(Arrays.asList(datosJuego));
 
             DatoJuego nuevoDatoJuego = new DatoJuego(nombreClase, puntaje);
@@ -90,11 +82,22 @@ public class AlmacenamientoPuntaje {
 
             String json = gson.toJson(listaDatosJuego);
 
-            FileWriter fileWriter = new FileWriter(ruta);
-            fileWriter.write(json);
-            fileWriter.close();
+            try (FileWriter fileWriter = new FileWriter(ruta)) {
+                fileWriter.write(json);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static JsonReader obtenerJsonReader(String ruta) throws IOException {
+        FileReader fileReader = new FileReader(ruta);
+        JsonReader jsonReader = new JsonReader(fileReader);
+        jsonReader.setLenient(true);
+        return jsonReader;
+    }
+
+    private static DatoJuego[] deserializar(Gson gson, JsonReader jsonReader){
+        return gson.fromJson(jsonReader, DatoJuego[].class);
     }
 }
