@@ -1,7 +1,6 @@
 package org.GameStation;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.FileReader;
@@ -17,7 +16,7 @@ public class AlmacenamientoPuntaje {
     public static void crearArchivo(String ruta, String nombreClase, float puntaje) {
         DatoJuego puntajeObj = new DatoJuego(nombreClase, puntaje);
         DatoJuego[] datosJuego = { puntajeObj };
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson();
         String json = gson.toJson(datosJuego);
 
         try (FileWriter fileWriter = new FileWriter(ruta)) {
@@ -44,7 +43,6 @@ public class AlmacenamientoPuntaje {
 
         return 0;
     }
-
 
     public static void sobreescribirArchivo(String ruta, String nombreClase, float puntaje) {
         try {
@@ -99,5 +97,24 @@ public class AlmacenamientoPuntaje {
 
     private static DatoJuego[] deserializar(Gson gson, JsonReader jsonReader){
         return gson.fromJson(jsonReader, DatoJuego[].class);
+    }
+
+    public static boolean comprobarExistenciaDato(String ruta, String nombreClase) {
+        boolean existe = false;
+        try {
+            Gson gson = new Gson();
+            JsonReader jsonReader = obtenerJsonReader(ruta);
+
+            DatoJuego[] datosJuego = deserializar(gson, jsonReader);
+            for (DatoJuego datoJuego : datosJuego) {
+                if (datoJuego.getNombreClase().equals(nombreClase)) {
+                    existe = true;
+                    break;
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return existe;
     }
 }

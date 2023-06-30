@@ -16,5 +16,7 @@ P
  .idea/metrics/1685180320179.json,2\f\2f82f232a3425e72ede0f4f37697a9f3c7404a6a
 w
 G.idea/sonarlint/issuestore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302,e\d\ed67eb178d523a4b3f117dcbe0eda5196367ceec
-i
-9src/main/java/org/GameStation/CarreraPackage/Barrera.java,4\c\4cbab26267068d0b3e6b6246839cb91f31c5d886
+X
+(src/main/java/org/GameStation/Juego.java,5\b\5baa816691ec755d59eae8a113406b33982b956b
+W
+'src/main/java/org/GameStation/Main.java,6\2\6274fb3b55d9934b486f5b62352adac5c6399118

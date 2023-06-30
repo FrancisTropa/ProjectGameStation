@@ -41,7 +41,7 @@ public class Obstaculo {
     }
 
     private float generarX() {
-         float porcion = Gdx.graphics.getWidth() / 10;
+         float porcion = Gdx.graphics.getWidth() / 10f;
          float rango = Gdx.graphics.getHeight() - porcion - ancho;
          return  porcion + MathUtils.random(rango);
     }

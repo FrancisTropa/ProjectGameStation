@@ -39,7 +39,7 @@ public class Carro {
     }
 
     private void definirPosicion() {
-        posicion = new Vector2(Gdx.graphics.getWidth()/2.4f, Gdx.graphics.getHeight()/3);
+        posicion = new Vector2(Gdx.graphics.getWidth()/2.4f, Gdx.graphics.getHeight()/3f);
     }
 
     private void calcularProporciones() {

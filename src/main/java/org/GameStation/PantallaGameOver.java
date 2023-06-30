@@ -1,7 +1,6 @@
 package org.GameStation;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -72,9 +71,9 @@ public class PantallaGameOver extends Juego.PantallaJuego{
     private void agregarATabla() {
         tabla.add(titulo).colspan(2).padTop(50).expandY().center();
         tabla.row();
-        tabla.add(botonReiniciar).width(Gdx.graphics.getWidth()/6.4f).height(Gdx.graphics.getWidth()/12).padBottom(20).center();
+        tabla.add(botonReiniciar).width(Gdx.graphics.getWidth()/6.4f).height(Gdx.graphics.getWidth()/12f).padBottom(20).center();
         tabla.row();
-        tabla.add(botonSalirMenu).width(Gdx.graphics.getWidth()/6.4f).height(Gdx.graphics.getWidth()/12).center();
+        tabla.add(botonSalirMenu).width(Gdx.graphics.getWidth()/6.4f).height(Gdx.graphics.getWidth()/12f).center();
     }
 
     @Override

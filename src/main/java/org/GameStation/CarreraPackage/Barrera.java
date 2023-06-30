@@ -20,7 +20,7 @@ public class Barrera {
         int ventanaAncho = Gdx.graphics.getWidth();
         int ventanaAlto = Gdx.graphics.getHeight();
 
-        ancho = ventanaAncho / 10;
+        ancho = ventanaAncho / 10f;
         alto = ventanaAlto;
     }
 

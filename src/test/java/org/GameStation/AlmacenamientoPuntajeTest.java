@@ -51,4 +51,12 @@ class AlmacenamientoPuntajeTest {
         assertEquals(40, puntaje);
     }
 
+    @Test
+    @DisplayName("Busca si ya hay un dato del juego")
+    void comprobarDato(){
+        AlmacenamientoPuntaje.crearArchivo(ruta, "juego1", 20);
+        boolean existe = AlmacenamientoPuntaje.comprobarExistenciaDato(ruta, "juego1");
+        assertTrue(existe);
+    }
+
 }

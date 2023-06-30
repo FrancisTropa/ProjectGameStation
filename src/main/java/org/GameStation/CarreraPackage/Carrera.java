@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import org.GameStation.AlmacenamientoPuntaje;
 import org.GameStation.Juego;
 import org.GameStation.OpcionesJuego;
 import org.GameStation.PantallaGameOver;
+
+import java.io.File;
 
 public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
 
@@ -19,7 +22,8 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
     private Texture texturaCarro;
     private Texture texturaObstaculo;
     private Carro carro;
-    private Barrera barreraIzq, barreraDer;
+    private Barrera barreraIzq;
+    private Barrera barreraDer;
     private ShapeRenderer shapeRenderer;
     private int colisiones;
     private float puntuacion;
@@ -66,7 +70,7 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
         batch.begin();
 
         fuentePuntuacion.setColor(Color.WHITE);
-        fuentePuntuacion.draw(batch, "Puntuación: " + puntuacion, 10, Gdx.graphics.getHeight() - 10);
+        fuentePuntuacion.draw(batch, "Puntuación: " + puntuacion, 10f, Gdx.graphics.getHeight() - 10f);
 
         obstaculo.update(delta);
         obstaculo.render(batch);
@@ -89,8 +93,36 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
 
     private void comprobarTermino() {
         if (juegoTerminado){
+            irAlArchivo();
             Juego.PantallaJuego pantallaGameOver = new PantallaGameOver(juego, this);
             juego.setScreen(pantallaGameOver);
+        }
+    }
+
+    private void irAlArchivo() {
+        File archivo = new File("archivos/puntajes.json");
+        if(archivo.exists()){
+            comprobarSiHayDatos();
+        }else {
+            AlmacenamientoPuntaje.crearArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
+        }
+    }
+
+    private void comprobarSiHayDatos() {
+        if (AlmacenamientoPuntaje.comprobarExistenciaDato("archivos/puntajes.json", this.getClass().getSimpleName())){
+            comprobarPuntajeMayor();
+        }else {
+            agregarDatos();
+        }
+    }
+
+    private void agregarDatos() {
+        AlmacenamientoPuntaje.agregarDatoAlArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
+    }
+
+    private void comprobarPuntajeMayor() {
+        if (AlmacenamientoPuntaje.ObtenerPuntaje("archivos/puntajes.json", this.getClass().getSimpleName()) < this.puntuacion){
+            AlmacenamientoPuntaje.agregarDatoAlArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
         }
     }
 
