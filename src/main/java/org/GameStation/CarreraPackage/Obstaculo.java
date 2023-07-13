@@ -14,12 +14,13 @@ public class Obstaculo {
     private Vector2 velocidad;
     private int ancho;
     private int alto;
+    private int constanteVelocidad = 280;
 
      public Obstaculo(Texture textura){
          this.textura = textura;
          calcularProporciones();
          generarPosicion();
-         this.velocidad = new Vector2(0, 200);
+         this.velocidad = new Vector2(0, constanteVelocidad);
      }
 
     private void calcularProporciones() {
@@ -32,7 +33,7 @@ public class Obstaculo {
     }
 
     private void definirAlto() {
-        alto = Gdx.graphics.getHeight() /15;
+        alto = Gdx.graphics.getHeight() / 9;
     }
 
     public void generarPosicion() {

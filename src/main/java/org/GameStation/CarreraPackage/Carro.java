@@ -14,7 +14,7 @@ public class Carro {
     private boolean moverDerecha;
     private int ancho;
     private int alto;
-    private int velocidadMovimiento = 300;
+    private int velocidadMovimiento = 350;
 
     public Carro(Texture textura) {
         this.textura = textura;

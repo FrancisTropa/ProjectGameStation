@@ -8,29 +8,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 import org.GameStation.AlmacenamientoPuntaje;
 import org.GameStation.Juego;
-import org.GameStation.OpcionesJuego;
+import org.GameStation.JuegoBase;
 import org.GameStation.PantallaGameOver;
 
 import java.io.File;
 
-public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
+public class Carrera extends JuegoBase {
 
     private SpriteBatch batch;
     private Texture texturaCarro;
     private Texture texturaObstaculo;
     private Carro carro;
-    private Barrera barreraIzq;
-    private Barrera barreraDer;
+    private Barrera[] barreras;
     private ShapeRenderer shapeRenderer;
     private int colisiones;
-    private float puntuacion;
     private BitmapFont fuentePuntuacion;
     private float tiempoSinColision;
-    private boolean juegoTerminado = false;
     private Obstaculo obstaculo;
+    private String rutaSprites = "src/main/java/org/GameStation/imagenes/";
 
 
     public Carrera(Juego juego) {
@@ -41,17 +38,15 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
     public void show() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        texturaCarro = new Texture("src/main/java/org/GameStation/imagenes/carro.png");
-        texturaObstaculo = new Texture("src/main/java/org/GameStation/imagenes/cono.png");
+        texturaCarro = new Texture(rutaSprites+"carro.png");
+        texturaObstaculo = new Texture(rutaSprites+"cono.png");
         carro = new Carro(texturaCarro);
         obstaculo = new Obstaculo(texturaObstaculo);
-        barreraIzq = new Barrera();
-        barreraDer = new Barrera();
         colisiones = 3;
         puntuacion = 0;
+        barreras = new Barrera[2];
 
-        fuentePuntuacion = new BitmapFont();
-        fuentePuntuacion.getData().setScale(2);
+        crearFuente();
     }
 
     @Override
@@ -59,13 +54,12 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        definirBarreras();
+        crearBarreras();
 
         manejoTeclado();
         carro.update(delta);
 
-        barreraIzq.render(shapeRenderer);
-        barreraDer.render(shapeRenderer);
+        renderizarBarreras();
 
         batch.begin();
 
@@ -85,50 +79,21 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
         comprobarTermino();
     }
 
+    private void crearFuente(){
+        fuentePuntuacion = new BitmapFont();
+        fuentePuntuacion.getData().setScale(2);
+    }
+
     private void detectarColisionObstaculo(Obstaculo obstaculo){
         if (carro.getRectanguloColision().overlaps(obstaculo.getRectanguloColision())){
             verificarTiempo();
         }
     }
 
-    private void comprobarTermino() {
-        if (juegoTerminado){
-            irAlArchivo();
-            Juego.PantallaJuego pantallaGameOver = new PantallaGameOver(juego, this);
-            juego.setScreen(pantallaGameOver);
-        }
-    }
-
-    private void irAlArchivo() {
-        File archivo = new File("archivos/puntajes.json");
-        if(archivo.exists()){
-            comprobarSiHayDatos();
-        }else {
-            AlmacenamientoPuntaje.crearArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
-        }
-    }
-
-    private void comprobarSiHayDatos() {
-        if (AlmacenamientoPuntaje.comprobarExistenciaDato("archivos/puntajes.json", this.getClass().getSimpleName())){
-            comprobarPuntajeMayor();
-        }else {
-            agregarDatos();
-        }
-    }
-
-    private void agregarDatos() {
-        AlmacenamientoPuntaje.agregarDatoAlArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
-    }
-
-    private void comprobarPuntajeMayor() {
-        if (AlmacenamientoPuntaje.ObtenerPuntaje("archivos/puntajes.json", this.getClass().getSimpleName()) < this.puntuacion){
-            AlmacenamientoPuntaje.agregarDatoAlArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
-        }
-    }
 
     private void detectarColision(float delta) {
-        if (carro.getRectanguloColision().overlaps(barreraIzq.getRectanguloColision()) ||
-                carro.getRectanguloColision().overlaps(barreraDer.getRectanguloColision())) {
+        if (carro.getRectanguloColision().overlaps(barreras[0].getRectanguloColision()) ||
+                carro.getRectanguloColision().overlaps(barreras[1].getRectanguloColision())) {
             verificarTiempo();
         }else {
             tiempoSinColision += delta;
@@ -150,9 +115,62 @@ public class Carrera extends Juego.PantallaJuego implements OpcionesJuego {
         }
     }
 
+    private void crearBarreras() {
+        for (int i = 0; i<barreras.length; i++){
+            barreras[i] = new Barrera();
+        }
+        definirBarreras();
+    }
+
     private void definirBarreras() {
-        barreraIzq.definirBarreraIzq();
-        barreraDer.definirBarreraDer();
+        barreras[0].definirBarreraIzq();
+        barreras[1].definirBarreraDer();
+    }
+
+    private void renderizarBarreras(){
+        for (Barrera barrera : barreras) {
+            barrera.render(shapeRenderer);
+        }
+    }
+
+    @Override
+    protected void comprobarTermino() {
+        if (juegoTerminado){
+            irAlArchivo();
+            Juego.PantallaJuego pantallaGameOver = new PantallaGameOver(juego, this);
+            juego.setScreen(pantallaGameOver);
+        }
+    }
+
+    @Override
+    protected void irAlArchivo() {
+        File archivo = new File("archivos/puntajes.json");
+        if(archivo.exists()){
+            comprobarSiHayDatos();
+        }else {
+            AlmacenamientoPuntaje.crearArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
+        }
+    }
+
+    @Override
+    protected void comprobarSiHayDatos() {
+        if (AlmacenamientoPuntaje.comprobarExistenciaDato("archivos/puntajes.json", this.getClass().getSimpleName())){
+            comprobarPuntajeMayor();
+        }else {
+            agregarDatos();
+        }
+    }
+
+    @Override
+    protected void agregarDatos() {
+        AlmacenamientoPuntaje.agregarDatoAlArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
+    }
+
+    @Override
+    protected void comprobarPuntajeMayor() {
+        if (AlmacenamientoPuntaje.ObtenerPuntaje("archivos/puntajes.json", this.getClass().getSimpleName()) < this.puntuacion){
+            AlmacenamientoPuntaje.sobreescribirArchivo("archivos/puntajes.json", this.getClass().getSimpleName(), this.puntuacion);
+        }
     }
 
     private void manejoTeclado() {
